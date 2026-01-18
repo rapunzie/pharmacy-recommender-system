@@ -82,7 +82,7 @@ class DualRecommender:
 
         tfidf = TfidfVectorizer(
             ngram_range=(1, 2),
-            min_df=10,
+            min_df=2,
             max_features=self.max_tfidf_features
         )
 
