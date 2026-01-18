@@ -21,7 +21,11 @@ def load_data():
 
 transactions, details, items = load_data()
 
-model = DualRecommender(details, items, transactions)
+@st.cache_resource
+def load_model(details, items, transactions):
+    return DualRecommender(details, items, transactions)
+
+model = load_model(details, items, transactions)
 
 item_list = {
     row["Kode_Item"]: (
