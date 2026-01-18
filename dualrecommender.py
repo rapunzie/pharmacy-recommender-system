@@ -101,11 +101,11 @@ class DualRecommender:
   
     def recommend(self, item_code: str, top_k: int = 5):
   
-        if self.ibcf_sim is None:
-            self._build_ibcf()
+        # if self.ibcf_sim is None:
+        #     self._build_ibcf()
 
-        # if self.content_sim is None:
-        #     self._build_content()
+        if self.content_sim is None:
+            self._build_content()
 
         results = {}
 
