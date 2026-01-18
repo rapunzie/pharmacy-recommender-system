@@ -37,8 +37,8 @@ class DualRecommender:
 
         item_freq = (basket > 0).sum(axis=0)
         frequent_items = item_freq[item_freq >= self.min_freq].index
-
         basket = basket[frequent_items]
+        
         sim = cosine_similarity(basket.T)
 
         self.ibcf_sim = pd.DataFrame(
@@ -53,8 +53,13 @@ class DualRecommender:
             self.items["Tipe_Golongan_Obat"].fillna("") + " " +
             self.items["Satuan"].fillna("")
         )
-
-        tfidf = TfidfVectorizer(ngram_range=(1,2), min_df=5)
+        
+        # tfidf = TfidfVectorizer(ngram_range=(1,2), min_df=5)
+        tfidf = TfidfVectorizer(
+            ngram_range=(1,1),
+            min_df=10,
+            max_features=3000
+        )
         mat = tfidf.fit_transform(self.items["content"])
 
         sim = cosine_similarity(mat)
@@ -110,62 +115,3 @@ class DualRecommender:
             "co_occurrence": co,
             "content_based": cb
         }
-
-    # def recommend(self, item_code, top_k=5, 
-    #             location=None, 
-    #             days_back=None):
-
-        # # ---------- Build Context Filter ----------
-        # df_ctx = self.df
-
-        # if location is not None:
-        #     df_ctx = df_ctx[df_ctx["lokasi_apotek"] == location]
-
-        # if days_back is not None:
-        #     cutoff = df_ctx["Tanggal"].max() - pd.Timedelta(days=days_back)
-        #     df_ctx = df_ctx[df_ctx["Tanggal"] >= cutoff]
-
-        # valid_items = set(df_ctx["Kode_Item"].unique())
-
-        # # ---------- CO-OCCURRENCE ----------
-        # if item_code in self.ibcf_sim:
-        #     co = (
-        #         self._normalize(self.ibcf_sim[item_code])
-        #         .drop(item_code, errors="ignore")
-        #         .loc[lambda s: s.index.isin(valid_items)]
-        #         .sort_values(ascending=False)
-        #         .head(top_k)
-        #         .reset_index()
-        #         .rename(columns={"index":"Kode_Item", item_code:"Score"})
-        #         .assign(
-        #             Nama_Item=lambda x: x["Kode_Item"].map(self.item_lookup),
-        #             Kandungan=lambda x: x["Kode_Item"].map(self.kandungan_lookup),
-        #             Method="Co-Occurrence"
-        #         )
-        #     )
-        # else:
-        #     co = pd.DataFrame()
-
-        # # ---------- CONTENT-BASED ----------
-        # if item_code in self.content_sim:
-        #     cb = (
-        #         self._normalize(self.content_sim[item_code])
-        #         .drop(item_code)
-        #         .loc[lambda s: s.index.isin(valid_items)]
-        #         .sort_values(ascending=False)
-        #         .head(top_k)
-        #         .reset_index()
-        #         .rename(columns={"index":"Kode_Item", item_code:"Score"})
-        #         .assign(
-        #             Nama_Item=lambda x: x["Kode_Item"].map(self.item_lookup),
-        #             Kandungan=lambda x: x["Kode_Item"].map(self.kandungan_lookup),
-        #             Method="Content-Based"
-        #         )
-        #     )
-        # else:
-        #     cb = pd.DataFrame()
-
-        # return {
-        #     "co_occurrence": co,
-        #     "content_based": cb
-        # }
