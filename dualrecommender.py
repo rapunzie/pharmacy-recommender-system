@@ -38,7 +38,6 @@ class DualRecommender:
         item_freq = (basket > 0).sum(axis=0)
         frequent_items = item_freq[item_freq >= self.min_freq].index
         basket = basket[frequent_items]
-        
         sim = cosine_similarity(basket.T)
 
         self.ibcf_sim = pd.DataFrame(
@@ -53,13 +52,8 @@ class DualRecommender:
             self.items["Tipe_Golongan_Obat"].fillna("") + " " +
             self.items["Satuan"].fillna("")
         )
-        
-        # tfidf = TfidfVectorizer(ngram_range=(1,2), min_df=5)
-        tfidf = TfidfVectorizer(
-            ngram_range=(1,1),
-            min_df=10,
-            max_features=3000
-        )
+
+        tfidf = TfidfVectorizer(ngram_range=(1,2), min_df=5)
         mat = tfidf.fit_transform(self.items["content"])
 
         sim = cosine_similarity(mat)
