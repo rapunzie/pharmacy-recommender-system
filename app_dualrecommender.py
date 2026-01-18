@@ -3,10 +3,7 @@ import pandas as pd
 from dualrecommender import DualRecommender
 import os
 
-try:
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-except NameError:
-    BASE_DIR = os.getcwd()
+BASE_DIR = os.getcwd()
 
 st.set_page_config(page_title="Pharmacy Item Recommendation", layout="centered")
 
@@ -14,11 +11,11 @@ st.title("K-24 Item Recommendation System")
 st.caption("🛒 = Pola beli (co occurrence)| 🧬 = Kemiripan kandungan, golongan, dan satuan obat")
 
 
-@st.cache_data
+
 def load_data():
-    transactions = pd.read_csv(os.path.join(BASE_DIR, "data/transactions_dummy.csv"))
-    details = pd.read_csv(os.path.join(BASE_DIR, "data/transaction_details_dummy.csv"))
-    items = pd.read_csv(os.path.join(BASE_DIR, "data/items_dummy.csv"))
+    transactions = pd.read_csv("data/transactions_dummy.csv")
+    details = pd.read_csv("data/transaction_details_dummy.csv")
+    items = pd.read_csv("data/items_dummy.csv")
     return transactions, details, items
 
 
