@@ -16,7 +16,7 @@ def load_data():
 
 transactions, details, items = load_data()
 
-# @st.cache_resource
+@st.cache_resource(show_spinner="Building recommender...")
 def load_model(details, items, transactions):
     return DualRecommender(details, items, transactions)
 
