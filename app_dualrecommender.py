@@ -2,26 +2,31 @@ import streamlit as st
 import pandas as pd
 from dualrecommender import DualRecommender
 
-st.set_page_config(page_title="Pharmacy Item Recommendation", layout="centered")
+st.set_page_config(
+    page_title="Pharmacy Item Recommendation",
+    layout="centered"
+)
 
 st.title("K-24 Item Recommendation System")
-st.caption("🛒 = Pola beli (co occurrence)| 🧬 = Kemiripan kandungan, golongan, dan satuan obat")
+st.caption("🛒 = Pola beli (IBCF) | 🧬 = Kemiripan kandungan, golongan, kategori, dan satuan obat")
 
 @st.cache_data
-def load_data():
-    transactions = pd.read_csv("data/transactions_dummy.csv")
-    details = pd.read_csv("data/transaction_details_dummy.csv")
-    items = pd.read_csv("data/items_dummy.csv")
-    return transactions, details, items
+def load_items():
+    return pd.read_csv("data/items_dummy.csv")
 
-transactions, details, items = load_data()
+items = load_items()
 
-@st.cache_resource(show_spinner="Building recommender...")
-def load_model(details, items, transactions):
-    return DualRecommender(details, items, transactions)
+# Load model
+@st.cache_resource(show_spinner="Loading recommender system...")
+def load_model(items):
+    model = DualRecommender(
+        items=items,
+        enable_content=True
+    )
+    model.load_ibcf("artifacts/ibcf_sim.parquet")
+    return model
 
-with st.spinner("Membangun model rekomendasi, mohon tunggu..."):
-    model = load_model(details, items, transactions)
+model = load_model(items)
 
 item_list = {
     row["Kode_Item"]: (
@@ -37,25 +42,28 @@ selected_item = st.selectbox(
     format_func=lambda x: item_list[x]
 )
 
+# Recommendation
 if st.button("Search"):
     result = model.recommend(selected_item)
 
-    if not result["co_occurrence"].empty:
+    # IBCF
+    if not result["ibcf"].empty:
         st.subheader("🛒 Sering Dibeli Bersama")
-        for _, row in result["co_occurrence"].iterrows():
+        for _, row in result["ibcf"].iterrows():
             st.markdown(
                 f"**{row['Nama_Item']}**  \n"
                 f"Kandungan: *{row['Kandungan']}*  \n"
                 f"Skor relevansi: `{row['Score']:.2f}`"
             )
     else:
-        st.info("Tidak cukup data co-occurrence untuk item ini.")
+        st.info("Tidak cukup data pola pembelian untuk item ini.")
 
     st.divider()
 
-    if not result["content_based"].empty:
+    # Content
+    if not result["content"].empty:
         st.subheader("🧬 Mirip Secara Medis")
-        for _, row in result["content_based"].iterrows():
+        for _, row in result["content"].iterrows():
             st.markdown(
                 f"**{row['Nama_Item']}**  \n"
                 f"Kandungan: *{row['Kandungan']}*  \n"
