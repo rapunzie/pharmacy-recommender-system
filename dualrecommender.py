@@ -5,17 +5,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class DualRecommender:
-    """
-    Dual recommender system:
-    - IBCF (precomputed, loaded from disk)
-    - Content-based (TF-IDF, optional)
-    """
-
     def __init__(
         self,
         items: pd.DataFrame,
         enable_content: bool = True,
-        max_tfidf_features: int = 5000
+        max_tfidf_features: int = None
     ):
         self.items = items.copy()
         self.enable_content = enable_content
@@ -51,8 +45,7 @@ class DualRecommender:
 
         tfidf = TfidfVectorizer(
             ngram_range=(1, 2),
-            min_df=2,
-            max_features=self.max_tfidf_features
+            min_df=5  
         )
 
         mat = tfidf.fit_transform(self.items["content"])
