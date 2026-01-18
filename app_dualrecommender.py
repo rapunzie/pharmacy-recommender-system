@@ -3,7 +3,7 @@ import pandas as pd
 from dualrecommender import DualRecommender
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.getcwd()
 
 st.set_page_config(page_title="Pharmacy Item Recommendation", layout="centered")
 
@@ -21,7 +21,7 @@ def load_data():
 
 transactions, details, items = load_data()
 
-@st.cache_resource
+# @st.cache_resource
 def load_model(details, items, transactions):
     return DualRecommender(details, items, transactions)
 
