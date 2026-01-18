@@ -110,7 +110,8 @@ class DualRecommender:
         results = {}
 
         # Co-occurance
-        if item_code in self.ibcf_sim.columns:
+        # if item_code in self.ibcf_sim.columns:
+        if self.ibcf_sim is not None and item_code in self.ibcf_sim.columns:
             co = (
                 self._normalize(self.ibcf_sim[item_code])
                 .drop(item_code, errors="ignore")
