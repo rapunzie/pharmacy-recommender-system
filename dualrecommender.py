@@ -104,8 +104,8 @@ class DualRecommender:
         if self.ibcf_sim is None:
             self._build_ibcf()
 
-        if self.content_sim is None:
-            self._build_content()
+        # if self.content_sim is None:
+        #     self._build_content()
 
         results = {}
 
