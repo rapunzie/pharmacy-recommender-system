@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 from dualrecommender import DualRecommender
 
-st.set_option("server.enableCORS", False)
-st.set_option("server.enableXsrfProtection", False)
-
 st.set_page_config(page_title="Pharmacy Item Recommendation", layout="centered")
 
 st.title("K-24 Item Recommendation System")
