@@ -3,7 +3,10 @@ import pandas as pd
 from dualrecommender import DualRecommender
 import os
 
-BASE_DIR = os.getcwd()
+try:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+except NameError:
+    BASE_DIR = os.getcwd()
 
 st.set_page_config(page_title="Pharmacy Item Recommendation", layout="centered")
 
